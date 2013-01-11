@@ -17,6 +17,15 @@ def check_address(address):
     output,err = p2.communicate()
     return p2.returncode
 
+def check_valid_IP(address):
+    try:
+        IP(address)
+    except:
+        result = False
+    else:
+        result = True
+    return result
+
 class GetHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
@@ -67,15 +76,6 @@ def parse_arguments():
     parser.add_argument('-ipv6', '--ipv6', help='IPv6 address to bind to. Should not be ::', required=False)
     args = vars(parser.parse_args())
     return args
-
-def check_valid_IP(address):
-    try:
-        IP(address)
-    except:
-        result = False
-    else:
-        result = True
-    return result
 
 if __name__ == '__main__':
     args = parse_arguments()
