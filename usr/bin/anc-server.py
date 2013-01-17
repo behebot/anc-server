@@ -4,7 +4,6 @@ __author__ = 'behemot'
 
 import subprocess
 import urlparse
-import argparse
 import daemon
 import socket
 import ConfigParser
@@ -70,14 +69,6 @@ class GetHandler(BaseHTTPRequestHandler):
 class HTTPServerV6(HTTPServer):
     address_family = socket.AF_INET6
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description='Run anc-server')
-    parser.add_argument('-p', '--port', help='Port number to use. Default: 8080', required=False, default=8080)
-    parser.add_argument('-ipv4', '--ipv4', help='IPv4 address to bind to.', required=True)
-    parser.add_argument('-ipv6', '--ipv6', help='IPv6 address to bind to. Should not be ::', required=False)
-    args = vars(parser.parse_args())
-    return args
-
 def read_config(config_name):
     "Read and parse configuration file"
     config = ConfigParser.ConfigParser()
@@ -85,12 +76,7 @@ def read_config(config_name):
     return config._sections
 
 if __name__ == '__main__':
-#    args = parse_arguments()
-#    port = args['port']
-#    ipv4 = args['ipv4']
-#    ipv6 = args['ipv6']
-
-    args = read_config('anc-server.cfg')
+    args = read_config('/etc/anc-server/anc-server.cfg')
     port = int(args['Common']['port'])
     ipv4 = args['Common']['ipv4']
     ipv6 = args['Common']['ipv6']
