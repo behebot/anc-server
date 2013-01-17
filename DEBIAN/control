@@ -1,0 +1,8 @@
+Package: anc-server
+Version: 0.1
+Section: base
+Priority: optional
+Architecture: all
+Depends: python, python-daemon, python-ipy
+Maintainer: behemot@yandex-team.ru
+Description: anc-server package

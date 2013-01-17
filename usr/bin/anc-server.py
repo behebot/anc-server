@@ -7,6 +7,7 @@ import urlparse
 import argparse
 import daemon
 import socket
+import ConfigParser
 from BaseHTTPServer import (BaseHTTPRequestHandler, HTTPServer)
 from IPy import IP
 
@@ -77,24 +78,35 @@ def parse_arguments():
     args = vars(parser.parse_args())
     return args
 
+def read_config(config_name):
+    "Read and parse configuration file"
+    config = ConfigParser.ConfigParser()
+    config.read(config_name)
+    return config._sections
+
 if __name__ == '__main__':
-    args = parse_arguments()
-    port = args['port']
-    ipv4 = args['ipv4']
-    ipv6 = args['ipv6']
+#    args = parse_arguments()
+#    port = args['port']
+#    ipv4 = args['ipv4']
+#    ipv6 = args['ipv6']
+
+    args = read_config('anc-server.cfg')
+    port = int(args['Common']['port'])
+    ipv4 = args['Common']['ipv4']
+    ipv6 = args['Common']['ipv6']
+
     files_to_preserve = []
     if check_valid_IP(ipv4):
         v4server = HTTPServer((ipv4, port), GetHandler)
         files_to_preserve.append(v4server.fileno())
-        if ipv6:
-            if check_valid_IP(ipv6):
-                v6server = HTTPServerV6((ipv6, port), GetHandler)
-                files_to_preserve.append(v6server.fileno())
-        # daemonization part
+        if ipv6 and check_valid_IP(ipv6):
+            v6server = HTTPServerV6((ipv6, port), GetHandler)
+            files_to_preserve.append(v6server.fileno())
+    # daemonization part
         daemon_context = daemon.DaemonContext()
         daemon_context.files_preserve = files_to_preserve
 
         with daemon_context:
             v4server.serve_forever()
             if ipv6:
-                v6server.server_forever()
+                v6server.serve_forever()
